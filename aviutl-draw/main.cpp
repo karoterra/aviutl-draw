@@ -139,7 +139,7 @@ int draw(lua_State* L) {
 		return luaL_error(L, "draw() require 3 args");
 	}
 
-	const Image src(
+	const ReadOnlyImage src(
 		static_cast<BGRA*>(lua_touserdata(L, 1)),
 		lua_tointeger(L, 2),
 		lua_tointeger(L, 3)

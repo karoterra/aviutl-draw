@@ -35,6 +35,35 @@ struct YCbCr {
 	YCbCr(const BGRA rgb);
 };
 
+struct ReadOnlyImage {
+	const BGRA* data;
+	int width;
+	int height;
+
+	ReadOnlyImage() : data(nullptr), width(0), height(0) {}
+
+	ReadOnlyImage(const BGRA* buf, int w, int h)
+		: data(buf), width(w), height(h)
+	{}
+
+	inline BGRA getPixel(int x, int y) const {
+		return data[x + width * y];
+	}
+
+	inline BGRA getPixelSafe(int x, int y) const {
+		if (x < 0 || width <= x || y < 0 || height <= y) {
+			return BGRA(0, 0, 0, 0);
+		}
+		return data[x + width * y];
+	}
+
+	BGRA samplePixel(Vec2 p) const {
+		int x = static_cast<int>(p.x + 0.5);
+		int y = static_cast<int>(p.y + 0.5);
+		return getPixelSafe(x, y);
+	}
+};
+
 struct Image {
 	std::vector<BGRA> data;
 	int width;
