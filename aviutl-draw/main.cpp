@@ -9,10 +9,12 @@
 #include "graphic.h"
 #include "composite.h"
 #include "blend.h"
+#include "interpolate.h"
 
 static Image dest;
 static composite::Composite compositeMode = composite::sourceOver;
 static blend::Blend blendMode = blend::normal;
+static interpolate::Interpolate interpolateFunc = interpolate::bilinear;
 
 int clear(lua_State* L) {
 	if (lua_gettop(L) < 2) {
@@ -144,6 +146,22 @@ int setBlend(lua_State* L) {
 	return 0;
 }
 
+int setInterpolate(lua_State* L) {
+	if (lua_gettop(L) < 1) {
+		return luaL_error(L, "setInterpolate() require 1 arg");
+	}
+
+	switch (lua_tointeger(L, 1)) {
+	case 0:
+		interpolateFunc = interpolate::nearestNeighbor;
+		break;
+	case 1:
+		interpolateFunc = interpolate::bilinear;
+		break;
+	}
+	return 0;
+}
+
 // draw(data,w,h, ox,oy,zoom,alpha,rotate)
 int draw(lua_State* L) {
 	const int argn = lua_gettop(L);
@@ -200,7 +218,7 @@ int draw(lua_State* L) {
 	for (int y = sy; y < ey; y++) {
 		for (int x = sx; x < ex; x++) {
 			Vec2 point = inv.transform(Vec2{ (float)x, (float)y });
-			auto ps = src.samplePixel(point);
+			auto ps = interpolateFunc(src, point);
 			auto pd = dest.getPixel(x, y);
 			ps.a = (uint8_t)((float)ps.a * alpha);
 			int fd, fs;
@@ -240,6 +258,7 @@ static luaL_Reg functions[] = {
 	{"getimage", getImage},
 	{"setcomposite", setComposite},
 	{"setblend", setBlend},
+	{"setinterpolate", setInterpolate},
 	{"draw", draw},
 	{nullptr, nullptr},
 };
