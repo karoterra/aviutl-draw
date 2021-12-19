@@ -71,3 +71,10 @@ obj.setoption("drawtarget", "framebuffer")
     - 10: 陰影
     - 11: 明暗
     - 12: 差分
+
+## ライセンス
+
+このソフトウェアは MIT ライセンスのもとで公開されます。
+詳細は [LICENSE](LICENSE) を参照してください。
+
+使用したライブラリ等については [CREDITS](CREDITS.md) を参照してください。
