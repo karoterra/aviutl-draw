@@ -8,12 +8,15 @@
 ```lua
 local KD = require("KaroterraDraw")
 
+-- バッファをクリアする
+-- KD.clear(obj.screen_w, obj.screen_h)
 -- 画像データをセットしてバッファを準備する
 KD.setimage(obj.getpixeldata())
 
 -- 描画オプションを設定する
 KD.setcomposite(3)
 KD.setblend(0)
+KD.setinterpolate(1)
 
 -- 描画する
 obj.load("figure", "円", 0xffffff, 100)
@@ -28,8 +31,12 @@ obj.putpixeldata(data)
 obj.setoption("drawtarget", "framebuffer")
 ```
 
+- clear(w, h)
+  - DLL内で保持しているバッファを透明な画像として初期化する。`obj.setoption("drawtarget", "tempbuffer", w, h)`相当
+  - w: 幅
+  - h: 高さ
 - setimage(data, w, h)
-  - DLL内で保持しているバッファに画像を送る
+  - DLL内で保持しているバッファに画像を送る。この画像でバッファが初期化される。
   - data: 画像データ
   - w: 幅
   - h: 高さ
@@ -71,6 +78,11 @@ obj.setoption("drawtarget", "framebuffer")
     - 10: 陰影
     - 11: 明暗
     - 12: 差分
+- setinterpolate(value)
+  - 画像の補完方法を指定する
+  - value: 補完方法
+    - 0: Nearest Neighbor
+    - 1: Bilinear
 
 ## ライセンス
 
