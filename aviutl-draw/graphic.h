@@ -77,6 +77,21 @@ struct Image {
 		}
 	}
 
+	void clear() {
+		for (int i = 0; i < width * height; i++) {
+			data[i] = BGRA(0, 0, 0, 0);
+		}
+	}
+
+	void clear(int w, int h) {
+		width = w;
+		height = h;
+		data.resize(w * h);
+		for (int i = 0; i < w * h; i++) {
+			data[i] = BGRA(0, 0, 0, 0);
+		}
+	}
+
 	void setData(const BGRA* buf, int w, int h) {
 		width = w;
 		height = h;

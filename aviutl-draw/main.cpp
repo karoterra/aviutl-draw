@@ -14,6 +14,18 @@ static Image dest;
 static composite::Composite compositeMode = composite::sourceOver;
 static blend::Blend blendMode = blend::normal;
 
+int clear(lua_State* L) {
+	if (lua_gettop(L) < 2) {
+		dest.clear();
+	}
+	else {
+		int w = lua_tointeger(L, 1);
+		int h = lua_tointeger(L, 1);
+		dest.clear(w, h);
+	}
+	return 0;
+}
+
 int setImage(lua_State* L) {
 	if (lua_gettop(L) < 3) {
 		return luaL_error(L, "setImage() require 3 args");
@@ -223,6 +235,7 @@ int draw(lua_State* L) {
 }
 
 static luaL_Reg functions[] = {
+	{"clear", clear},
 	{"setimage", setImage},
 	{"getimage", getImage},
 	{"setcomposite", setComposite},
