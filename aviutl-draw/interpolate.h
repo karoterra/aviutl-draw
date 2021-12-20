@@ -1,6 +1,7 @@
 #pragma once
 
 #include "graphic.h"
+#include <cmath>
 
 namespace interpolate {
 	using Interpolate = BGRA(*)(const ReadOnlyImage&, Vec2);
@@ -10,8 +11,8 @@ namespace interpolate {
 	}
 
 	BGRA bilinear(const ReadOnlyImage& img, Vec2 p) {
-		int x = static_cast<int>(p.x);
-		int y = static_cast<int>(p.y);
+		int x = static_cast<int>(std::floor(p.x));
+		int y = static_cast<int>(std::floor(p.y));
 		auto dx = p.x - x;
 		auto dy = p.y - y;
 		auto c1 = img.getPixelSafe(x, y);
