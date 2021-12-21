@@ -4,13 +4,16 @@
 #include <cmath>
 
 namespace interpolate {
-	using Interpolate = BGRA(*)(const ReadOnlyImage&, Vec2);
+	template<class T>
+	using Interpolate = BGRA(*)(const ReadOnlyImage&, Vec2<T>);
 
-	BGRA nearestNeighbor(const ReadOnlyImage& img, Vec2 p) {
+	template<class T>
+	BGRA nearestNeighbor(const ReadOnlyImage& img, Vec2<T> p) {
 		return img.samplePixel(p);
 	}
 
-	BGRA bilinear(const ReadOnlyImage& img, Vec2 p) {
+	template<class T>
+	BGRA bilinear(const ReadOnlyImage& img, Vec2<T> p) {
 		int x = static_cast<int>(std::floor(p.x));
 		int y = static_cast<int>(std::floor(p.y));
 		auto dx = p.x - x;
@@ -21,10 +24,10 @@ namespace interpolate {
 		auto c4 = img.getPixelSafe(x + 1, y + 1);
 
 		return BGRA(
-			(1 - dx) * (1 - dy) * c1.b + (1 - dx) * dy * c2.b + dx * (1 - dy) * c3.b + dx * dy * c4.b,
-			(1 - dx) * (1 - dy) * c1.g + (1 - dx) * dy * c2.g + dx * (1 - dy) * c3.g + dx * dy * c4.g,
-			(1 - dx) * (1 - dy) * c1.r + (1 - dx) * dy * c2.r + dx * (1 - dy) * c3.r + dx * dy * c4.r,
-			(1 - dx) * (1 - dy) * c1.a + (1 - dx) * dy * c2.a + dx * (1 - dy) * c3.a + dx * dy * c4.a
+			static_cast<uint8_t>((1 - dx) * (1 - dy) * c1.b + (1 - dx) * dy * c2.b + dx * (1 - dy) * c3.b + dx * dy * c4.b),
+			static_cast<uint8_t>((1 - dx) * (1 - dy) * c1.g + (1 - dx) * dy * c2.g + dx * (1 - dy) * c3.g + dx * dy * c4.g),
+			static_cast<uint8_t>((1 - dx) * (1 - dy) * c1.r + (1 - dx) * dy * c2.r + dx * (1 - dy) * c3.r + dx * dy * c4.r),
+			static_cast<uint8_t>((1 - dx) * (1 - dy) * c1.a + (1 - dx) * dy * c2.a + dx * (1 - dy) * c3.a + dx * dy * c4.a)
 		);
 	}
 }

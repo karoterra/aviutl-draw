@@ -2,14 +2,16 @@
 
 #include <cmath>
 
+template<class T>
 struct Vec2 {
-	float x, y;
+	T x, y;
 };
 
+template<class T>
 class Mat {
-	float m11, m12, m13;
-	float m21, m22, m23;
-	float m31, m32, m33;
+	T m11, m12, m13;
+	T m21, m22, m23;
+	T m31, m32, m33;
 
 public:
 	Mat()
@@ -19,15 +21,15 @@ public:
 	{}
 
 	Mat(
-		float m11, float m12, float m13,
-		float m21, float m22, float m23,
-		float m31, float m32, float m33)
+		T m11, T m12, T m13,
+		T m21, T m22, T m23,
+		T m31, T m32, T m33)
 		: m11(m11), m12(m12), m13(m13)
 		, m21(m21), m22(m22), m23(m23)
 		, m31(m31), m32(m32), m33(m33)
 	{}
 
-	void scale(float sx, float sy) {
+	void scale(T sx, T sy) {
 		m11 *= sx;
 		m12 *= sx;
 		m13 *= sx;
@@ -36,7 +38,7 @@ public:
 		m23 *= sy;
 	}
 
-	void translate(float x, float y) {
+	void translate(T x, T y) {
 		m11 += x * m31;
 		m12 += x * m32;
 		m13 += x * m33;
@@ -45,10 +47,10 @@ public:
 		m23 += y * m33;
 	}
 
-	void rotate(float theta) {
-		float c = std::cos(theta);
-		float s = std::sin(theta);
-		float x, y;
+	void rotate(T theta) {
+		T c = std::cos(theta);
+		T s = std::sin(theta);
+		T x, y;
 		x = c * m11 - s * m21;
 		y = s * m11 + c * m21;
 		m11 = x; m21 = y;
@@ -60,11 +62,11 @@ public:
 		m13 = x; m23 = y;
 	}
 
-	Mat inverse() {
-		float A = m11 * m22 * m33 + m12 * m23 * m32 + m13 * m21 * m32
+	Mat<T> inverse() {
+		T A = m11 * m22 * m33 + m12 * m23 * m32 + m13 * m21 * m32
 			- m13 * m22 * m31 - m12 * m21 * m33 - m11 * m23 * m32;
 		A = 1 / A;
-		return Mat(
+		return Mat<T>(
 			A * (m22 * m33 - m23 * m32),
 			-A * (m12 * m33 - m13 * m32),
 			A * (m12 * m23 - m13 * m22),
@@ -77,8 +79,8 @@ public:
 		);
 	}
 
-	Vec2 transform(Vec2 p) {
-		return Vec2{
+	Vec2<T> transform(Vec2<T> p) {
+		return Vec2<T>{
 			p.x * m11 + p.y * m12 + m13,
 			p.x * m21 + p.y * m22 + m23,
 		};

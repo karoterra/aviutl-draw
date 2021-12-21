@@ -11,10 +11,12 @@
 #include "blend.h"
 #include "interpolate.h"
 
+using Number = float;
+
 static Image dest;
 static composite::Composite compositeMode = composite::sourceOver;
 static blend::Blend blendMode = blend::normal;
-static interpolate::Interpolate interpolateFunc = interpolate::bilinear;
+static interpolate::Interpolate<Number> interpolateFunc = interpolate::bilinear;
 
 int clear(lua_State* L) {
 	if (lua_gettop(L) < 2) {
@@ -176,39 +178,36 @@ int draw(lua_State* L) {
 	);
 	const int ox = (argn >= 4) ? lua_tointeger(L, 4) : 0;
 	const int oy = (argn >= 5) ? lua_tointeger(L, 5) : 0;
-	float zoom = (argn >= 6) ? lua_tonumber(L, 6) : 1;
-	float alpha = (argn >= 7) ? lua_tonumber(L, 7) : 1;
-	float rotate = (argn >= 8) ? lua_tonumber(L, 8) : 0;
+	Number zoom = static_cast<Number>((argn >= 6) ? lua_tonumber(L, 6) : 1);
+	Number alpha = static_cast<Number>((argn >= 7) ? lua_tonumber(L, 7) : 1);
+	Number rotate = static_cast<Number>((argn >= 8) ? lua_tonumber(L, 8) : 0);
 
 	if (zoom < 0) return 0;
-	alpha = std::clamp(alpha, 0.f, 1.f);
+	alpha = std::clamp(alpha, static_cast<Number>(0), static_cast<Number>(1));
 	rotate = rotate / 180 * std::numbers::pi;
 
-	Mat mat;
+	Mat<Number> mat;
 	mat.translate(-src.width * 0.5, -src.height * 0.5);
 	mat.scale(zoom, zoom);
 	mat.rotate(rotate);
 	mat.translate(dest.width * 0.5 + ox, dest.height * 0.5 + oy);
-	Mat inv = mat.inverse();
+	Mat<Number> inv = mat.inverse();
 
-	Vec2 pt1 = mat.transform(Vec2{ 0,0 });
-	Vec2 pt2 = mat.transform(Vec2{ (float)src.width,0 });
-	Vec2 pt3 = mat.transform(Vec2{ (float)src.width,(float)src.height });
-	Vec2 pt4 = mat.transform(Vec2{ 0,(float)src.height });
-	int sx = pt1.x, sy = pt1.y;
+	Vec2<Number> pts[4] = {
+		mat.transform(Vec2<Number>{ 0,0 }),
+		mat.transform(Vec2<Number>{ static_cast<Number>(src.width),0 }),
+		mat.transform(Vec2<Number>{ static_cast<Number>(src.width),static_cast<Number>(src.height) }),
+		mat.transform(Vec2<Number>{ 0,static_cast<Number>(src.height) }),
+	};
+	int sx = pts[0].x, sy = pts[0].y;
 	int ex = sx, ey = sy;
-	if (pt2.x < sx) sx = pt2.x;
-	else if (pt2.x > ex) ex = pt2.x;
-	if (pt2.y < sy) sy = pt2.y;
-	else if (pt2.y > ey) ey = pt2.y;
-	if (pt3.x < sx) sx = pt3.x;
-	else if (pt3.x > ex) ex = pt3.x;
-	if (pt3.y < sy) sy = pt3.y;
-	else if (pt3.y > ey) ey = pt3.y;
-	if (pt4.x < sx) sx = pt4.x;
-	else if (pt4.x > ex) ex = pt4.x;
-	if (pt4.y < sy) sy = pt4.y;
-	else if (pt4.y > ey) ey = pt4.y;
+	for (int i = 1; i < 4; i++) {
+		if (pts[i].x < sx) sx = pts[i].x;
+		else if (pts[i].x > ex) ex = pts[i].x;
+
+		if (pts[i].y < sy) sy = pts[i].y;
+		else if (pts[i].y > ey) ey = pts[i].y;
+	}
 
 	if (sx < 0) sx = 0;
 	if (ex >= dest.width) ex = dest.width;
@@ -217,10 +216,11 @@ int draw(lua_State* L) {
 
 	for (int y = sy; y < ey; y++) {
 		for (int x = sx; x < ex; x++) {
-			Vec2 point = inv.transform(Vec2{ (float)x, (float)y });
+			Vec2<Number> point = inv.transform(Vec2<Number>{
+				static_cast<Number>(x), static_cast<Number>(y) });
 			auto ps = interpolateFunc(src, point);
 			auto pd = dest.getPixel(x, y);
-			ps.a = (uint8_t)((float)ps.a * alpha);
+			ps.a = static_cast<uint8_t>(ps.a * alpha);
 			int fd, fs;
 			compositeMode(pd, ps, fd, fs);
 

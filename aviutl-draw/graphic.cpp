@@ -11,7 +11,7 @@ BGRA::BGRA(const YCbCr c) {
 }
 
 YCbCr::YCbCr(const BGRA rgb) {
-	y = 0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b;
-	cb = -0.168736 * rgb.r - 0.331264 * rgb.g + 0.5 * rgb.b;
-	cr = 0.5 * rgb.r - 0.418688 * rgb.g - 0.081312 * rgb.b;
+	y = static_cast<short>(0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b);
+	cb = static_cast<short>(-0.168736 * rgb.r - 0.331264 * rgb.g + 0.5 * rgb.b);
+	cr = static_cast<short>(0.5 * rgb.r - 0.418688 * rgb.g - 0.081312 * rgb.b);
 }

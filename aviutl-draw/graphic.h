@@ -57,7 +57,8 @@ struct ReadOnlyImage {
 		return data[x + width * y];
 	}
 
-	BGRA samplePixel(Vec2 p) const {
+	template<class T>
+	BGRA samplePixel(Vec2<T> p) const {
 		int x = static_cast<int>(p.x + 0.5);
 		int y = static_cast<int>(p.y + 0.5);
 		return getPixelSafe(x, y);
@@ -109,7 +110,8 @@ struct Image {
 		data[x + width * y] = px;
 	}
 
-	BGRA samplePixel(Vec2 p) const {
+	template<class T>
+	BGRA samplePixel(Vec2<T> p) const {
 		int x = static_cast<int>(p.x + 0.5);
 		int y = static_cast<int>(p.y + 0.5);
 		if (x < 0 || width <= x || y < 0 || height <= y) {
