@@ -155,6 +155,7 @@
   <ItemGroup>
     <ClCompile Include="graphic.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="mat.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="interpolate.h" />

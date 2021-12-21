@@ -9,11 +9,11 @@ struct Vec2 {
 
 template<class T>
 class Mat {
+public:
 	T m11, m12, m13;
 	T m21, m22, m23;
 	T m31, m32, m33;
 
-public:
 	Mat()
 		: m11(1), m12(0), m13(0)
 		, m21(0), m22(1), m23(0)
@@ -85,4 +85,18 @@ public:
 			p.x * m21 + p.y * m22 + m23,
 		};
 	}
+
+	Vec2<T> mapPerspective(Vec2<T> p) {
+		T x = p.x * m11 + p.y * m12 + m13;
+		T y = p.x * m21 + p.y * m22 + m23;
+		T w = p.x * m31 + p.y * m32 + m33;
+		return Vec2<T>{ x / w, y / w };
+	}
 };
+
+template<class T>
+T cross(Vec2<T> p0, Vec2<T> p1, Vec2<T> p2) {
+	return (p1.x - p0.x) * (p2.y - p0.y) - (p2.x - p0.x) * (p1.y - p0.y);
+}
+
+void getPerspective(Vec2<double> dst[], Vec2<double> src[], Mat<double>& mat);
