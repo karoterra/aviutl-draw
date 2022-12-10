@@ -112,6 +112,30 @@ DLL内で保持しているバッファから画像を取得する。
 |     0 | Nearest Neighbor   |
 |     1 | Bilinear (default) |
 
+### `draw(data,w,h [,ox,oy,zoom,alpha,rotate])`
+DLL内で保持しているバッファに画像を描画する。
+- 引数
+  - data: 画像データ
+  - w: 幅
+  - h: 高さ
+  - ox: x座標(省略時は0)
+  - oy: y座標(省略時は0)
+  - zoom: 拡大率(省略時は1)
+  - alpha: 不透明度(省略時は1)
+  - rotate: 回転(省略時は0)
+- 戻り値: なし
+
+### `drawperspective(data,w,h, x0,y0,x1,y1,x2,y2,x3,y3, u0,v0,u1,v1,u2,v2,u3,v3,alpha)`
+DLL内で保持しているバッファに画像を射影変換して描画する。
+- 引数
+  - data: 画像データ
+  - w: 幅
+  - h: 高さ
+  - x0,y0, x1,y1, x2,y2, x3,y3: 射影元の座標
+  - u0,v0, u1,v1, u2,v2, u3,v3: 射影先の座標
+  - alpha: 不透明度(省略時は1)
+- 戻り値: なし
+
 ## ライセンス
 
 このソフトウェアは MIT ライセンスのもとで公開されます。
