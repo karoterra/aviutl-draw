@@ -33,6 +33,10 @@ obj.setoption("drawtarget", "framebuffer")
 
 ## 関数
 
+### `version()`
+バージョン情報を取得する。
+- 戻り値: バージョンを表す文字列
+
 ### `clear(w, h)`
 DLL内で保持しているバッファを透明な画像として初期化する。
 `obj.setoption("drawtarget", "tempbuffer", w, h)` 相当

@@ -18,6 +18,11 @@ static composite::Composite compositeMode = composite::sourceOver;
 static blend::Blend blendMode = blend::normal;
 static interpolate::Interpolate<Number> interpolateFunc = interpolate::bilinear;
 
+int version(lua_State* L) {
+	lua_pushstring(L, "0.1.0beta1");
+	return 1;
+}
+
 int clear(lua_State* L) {
 	if (lua_gettop(L) < 2) {
 		dest.clear();
@@ -321,6 +326,7 @@ int drawPerspective(lua_State* L) {
 }
 
 static luaL_Reg functions[] = {
+	{"version", version},
 	{"clear", clear},
 	{"setimage", setImage},
 	{"getimage", getImage},
