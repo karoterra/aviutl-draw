@@ -126,6 +126,143 @@ namespace blend
 		);
 	}
 
+	// 除外
+	BGRA exclusion(BGRA dest, BGRA src) {
+		return BGRA(
+			(int)dest.b + (int)src.b - 2 * (int)dest.b * (int)src.b / 255,
+			(int)dest.g + (int)src.g - 2 * (int)dest.g * (int)src.g / 255,
+			(int)dest.r + (int)src.r - 2 * (int)dest.r * (int)src.r / 255
+		);
+	}
+
+	// 除算
+	BGRA divide(BGRA dest, BGRA src) {
+		return BGRA(
+			src.b == 0 ? 255 : min(255, 255 * (int)dest.b / (int)src.b),
+			src.g == 0 ? 255 : min(255, 255 * (int)dest.g / (int)src.g),
+			src.r == 0 ? 255 : min(255, 255 * (int)dest.r / (int)src.r)
+		);
+	}
+
+	// 覆い焼きカラー
+	BGRA colorDodge(BGRA dest, BGRA src) {
+		auto f = [](int d, int s) {
+			if (d == 0) return 0;
+			else if (s == 255) return 255;
+			return min(255, 255 * d / (255 - s));
+		};
+		return BGRA(f(dest.b, src.b), f(dest.g, src.g), f(dest.r, src.r));
+	}
+
+	// 焼き込みカラー
+	BGRA colorBurn(BGRA dest, BGRA src) {
+		auto f = [](int d, int s) {
+			if (d == 255) return 255;
+			else if (s == 0) return 0;
+			return 255 - min(255, 255 * (255 - d) / s);
+		};
+		return BGRA(f(dest.b, src.b), f(dest.g, src.g), f(dest.r, src.r));
+	}
+
+	// ハードミックス
+	BGRA hardMix(BGRA dest, BGRA src) {
+		return BGRA(
+			(int)dest.b + (int)src.b >= 255 ? 255 : 0,
+			(int)dest.g + (int)src.g >= 255 ? 255 : 0,
+			(int)dest.r + (int)src.r >= 255 ? 255 : 0
+		);
+	}
+
+	// AND
+	BGRA binaryAnd(BGRA dest, BGRA src) {
+		return BGRA(
+			dest.b & src.b,
+			dest.g & src.b,
+			dest.r & src.b
+		);
+	}
+
+	// NAND
+	BGRA binaryNand(BGRA dest, BGRA src) {
+		return BGRA(
+			~(dest.b & src.b),
+			~(dest.g & src.b),
+			~(dest.r & src.b)
+		);
+	}
+
+	// OR
+	BGRA binaryOr(BGRA dest, BGRA src) {
+		return BGRA(
+			dest.b | src.b,
+			dest.g | src.b,
+			dest.r | src.b
+		);
+	}
+
+	// NOR
+	BGRA binaryNor(BGRA dest, BGRA src) {
+		return BGRA(
+			~(dest.b | src.b),
+			~(dest.g | src.b),
+			~(dest.r | src.b)
+		);
+	}
+
+	// XOR
+	BGRA binaryXor(BGRA dest, BGRA src) {
+		return BGRA(
+			dest.b ^ src.b,
+			dest.g ^ src.b,
+			dest.r ^ src.b
+		);
+	}
+
+	// XNOR
+	BGRA binaryXnor(BGRA dest, BGRA src) {
+		return BGRA(
+			~(dest.b ^ src.b),
+			~(dest.g ^ src.b),
+			~(dest.r ^ src.b)
+		);
+	}
+
+	// IMPLICATION
+	BGRA binaryImplication(BGRA dest, BGRA src) {
+		return BGRA(
+			~dest.b | src.b,
+			~dest.g | src.b,
+			~dest.r | src.b
+		);
+	}
+
+	// NOT IMPLICATION
+	BGRA binaryNotImplication(BGRA dest, BGRA src) {
+		return BGRA(
+			dest.b & ~src.b,
+			dest.g & ~src.b,
+			dest.r & ~src.b
+		);
+	}
+
+	// CONVERSE
+	BGRA binaryConverse(BGRA dest, BGRA src) {
+		return BGRA(
+			dest.b | ~src.b,
+			dest.g | ~src.b,
+			dest.r | ~src.b
+		);
+	}
+
+	// NOT CONVERSE
+	BGRA binaryNotConverse(BGRA dest, BGRA src) {
+		return BGRA(
+			~dest.b & src.b,
+			~dest.g & src.b,
+			~dest.r & src.b
+		);
+	}
+
 	Blend toBlend(int num) {
 		switch (num) {
 		case 0: return normal;
@@ -159,6 +296,21 @@ namespace blend
 		else if (strcmp(str, "LinearBurn") == 0) return linearBurn;
 		else if (strcmp(str, "LinearLight") == 0) return linearLight;
 		else if (strcmp(str, "Difference") == 0) return difference;
+		else if (strcmp(str, "Exclusion") == 0) return exclusion;
+		else if (strcmp(str, "Divide") == 0) return divide;
+		else if (strcmp(str, "ColorDodge") == 0) return colorDodge;
+		else if (strcmp(str, "ColorBurn") == 0) return colorBurn;
+		else if (strcmp(str, "HardMix") == 0) return hardMix;
+		else if (strcmp(str, "AND") == 0) return binaryAnd;
+		else if (strcmp(str, "NAND") == 0) return binaryNand;
+		else if (strcmp(str, "OR") == 0) return binaryOr;
+		else if (strcmp(str, "NOR") == 0) return binaryNor;
+		else if (strcmp(str, "XOR") == 0) return binaryXor;
+		else if (strcmp(str, "XNOR") == 0) return binaryXnor;
+		else if (strcmp(str, "IMPLICATION") == 0) return binaryImplication;
+		else if (strcmp(str, "NOT IMPLICATION") == 0) return binaryNotImplication;
+		else if (strcmp(str, "CONVERSE") == 0) return binaryConverse;
+		else if (strcmp(str, "NOT CONVERSE") == 0) return binaryNotConverse;
 		else return normal;
 	}
 }
