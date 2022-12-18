@@ -125,4 +125,40 @@ namespace blend
 			abs(dest.r - src.r)
 		);
 	}
+
+	Blend toBlend(int num) {
+		switch (num) {
+		case 0: return normal;
+		case 1: return addition;
+		case 2: return subtract;
+		case 3: return multiply;
+		case 4: return screen;
+		case 5: return overlay;
+		case 6: return lighten;
+		case 7: return darken;
+		case 8: return luminosity;
+		case 9: return color;
+		case 10: return linearBurn;
+		case 11: return linearLight;
+		case 12: return difference;
+		}
+		return normal;
+	}
+
+	Blend toBlend(const char* str) {
+		if (strcmp(str, "Normal") == 0) return normal;
+		else if (strcmp(str, "Addition") == 0) return addition;
+		else if (strcmp(str, "Subtract") == 0) return subtract;
+		else if (strcmp(str, "Multiply") == 0) return multiply;
+		else if (strcmp(str, "Screen") == 0) return screen;
+		else if (strcmp(str, "Overlay") == 0) return overlay;
+		else if (strcmp(str, "Lighten") == 0) return lighten;
+		else if (strcmp(str, "Darken") == 0) return darken;
+		else if (strcmp(str, "Luminosity") == 0) return luminosity;
+		else if (strcmp(str, "Color") == 0) return color;
+		else if (strcmp(str, "LinearBurn") == 0) return linearBurn;
+		else if (strcmp(str, "LinearLight") == 0) return linearLight;
+		else if (strcmp(str, "Difference") == 0) return difference;
+		else return normal;
+	}
 }

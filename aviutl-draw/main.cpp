@@ -109,46 +109,11 @@ int setBlend(lua_State* L) {
 		return luaL_error(L, "setBlend() require 1 arg");
 	}
 
-	switch (lua_tointeger(L, 1)) {
-	case 0:
-		blendMode = blend::normal;
-		break;
-	case 1:
-		blendMode = blend::addition;
-		break;
-	case 2:
-		blendMode = blend::subtract;
-		break;
-	case 3:
-		blendMode = blend::multiply;
-		break;
-	case 4:
-		blendMode = blend::screen;
-		break;
-	case 5:
-		blendMode = blend::overlay;
-		break;
-	case 6:
-		blendMode = blend::lighten;
-		break;
-	case 7:
-		blendMode = blend::darken;
-		break;
-	case 8:
-		blendMode = blend::luminosity;
-		break;
-	case 9:
-		blendMode = blend::color;
-		break;
-	case 10:
-		blendMode = blend::linearBurn;
-		break;
-	case 11:
-		blendMode = blend::linearLight;
-		break;
-	case 12:
-		blendMode = blend::difference;
-		break;
+	if (lua_isnumber(L, 1)) {
+		blendMode = blend::toBlend(lua_tointeger(L, 1));
+	}
+	else if (lua_isstring(L, 1)) {
+		blendMode = blend::toBlend(lua_tostring(L, 1));
 	}
 	return 0;
 }
